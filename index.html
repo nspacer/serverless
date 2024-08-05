@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Admin - Student Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .student-list {
+            margin-top: 20px;
+        }
+        .student-list select {
+            width: 200px;
+        }
+        .student-info, .update-form {
+            margin-top: 20px;
+        }
+        .student-info div, .update-form div {
+            margin-bottom: 10px;
+        }
+        .student-info label, .update-form label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>School Administration - Student Data</h1>
+    <button onclick="fetchStudentList()">Fetch Student List</button>
+    <div class="student-list">
+        <label for="students">Select Student:</label>
+        <select id="students" onchange="fetchStudentData(this.value)">
+            <option value="">Select a student</option>
+        </select>
+    </div>
+    <div class="student-info">
+        <div><label>Name:</label> <span id="student-name">-</span></div>
+        <div><label>Age:</label> <span id="student-age">-</span></div>
+        <div><label>Roll Number:</label> <span id="student-roll">-</span></div>
+        <div><label>Class:</label> <span id="student-class">-</span></div>
+        <div><label>Subjects:</label> <span id="student-subjects">-</span></div>
+    </div>
+
+    <h2>Update Student Data</h2>
+    <div class="update-form">
+        <div>
+            <label for="update-name">Name:</label>
+            <input type="text" id="update-name">
+        </div>
+        <div>
+            <label for="update-age">Age:</label>
+            <input type="number" id="update-age">
+        </div>
+        <div>
+            <label for="update-roll">Roll Number:</label>
+            <input type="text" id="update-roll">
+        </div>
+        <div>
+            <label for="update-class">Class:</label>
+            <input type="text" id="update-class">
+        </div>
+        <div>
+            <label for="update-subjects">Subjects (comma separated):</label>
+            <input type="text" id="update-subjects">
+        </div>
+        <button onclick="updateStudentData()">Update Student Data</button>
+    </div>
+
+    <script>
+        async function fetchStudentList() {
+            try {
+                const apiUrl = 'https://bvb2u3v6m5.execute-api.us-east-1.amazonaws.com/prod/'; // Replace with your actual API URL
+                const response = await fetch(apiUrl);
+                
+                if (response.ok) {
+                    const jsonResponse = await response.json(); // This gives you the whole response object
+                    
+                    // Check the structure of the response
+                    console.log(jsonResponse);
+                    
+                    // Access the 'body' field and parse it as JSON
+                    const students = JSON.parse(jsonResponse.body); // Parse the stringified JSON array
+
+                    const select = document.getElementById('students');
+                    select.innerHTML = '<option value="">Select a student</option>'; // Reset options
+                    students.forEach(student => {
+                        const option = document.createElement('option');
+                        option.value = student.roll; // Assume roll number is unique
+                        option.textContent = `${student.name} (Roll: ${student.roll})`;
+                        select.appendChild(option);
+                    });
+                } else {
+                    console.error('Error fetching student list:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching student list:', error);
+            }
+        }
+
+
+
+        async function fetchStudentData(rollNumber) {
+            try {
+                const apiUrl = `https://your-api-gateway-url.amazonaws.com/prod/students/${rollNumber}`; // Replace with your API URL
+                const response = await fetch(apiUrl);
+
+                if (response.ok) {
+                    const jsonResponse = await response.json(); // Parse the response to a JavaScript object
+                    
+                    // Check the structure of the response
+                    console.log(jsonResponse);
+
+                    // Assuming jsonResponse is the student object
+                    const student = jsonResponse;
+
+                    // Display or use student data as needed
+                    document.getElementById('student-name').textContent = student.name;
+                    document.getElementById('student-age').textContent = student.age;
+                    document.getElementById('student-class').textContent = student.class;
+                    document.getElementById('student-subject').textContent = student.subject;
+                } else {
+                    console.error('Error fetching student data:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching student data:', error);
+            }
+        }
+
+
+        async function updateStudentData(rollNumber, updatedData) {
+            try {
+                const apiUrl = `https://your-api-gateway-url.amazonaws.com/prod/students/${rollNumber}`; // Replace with your API URL
+                
+                const response = await fetch(apiUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedData) // Convert updatedData to JSON string
+                });
+
+                if (response.ok) {
+                    const jsonResponse = await response.json(); // Parse the response to a JavaScript object
+                    
+                    // Check the structure of the response
+                    console.log('Update successful:', jsonResponse);
+                    
+                    // Handle successful update (e.g., show a success message)
+                    alert('Student data updated successfully!');
+                } else {
+                    console.error('Error updating student data:', response.statusText);
+                    alert('Failed to update student data.');
+                }
+            } catch (error) {
+                console.error('Error updating student data:', error);
+                alert('Error occurred while updating student data.');
+            }
+        }
+
+    </script>
+</body>
+</html>
