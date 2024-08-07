@@ -6,158 +6,302 @@
     <title>School Admin - Student Data</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+            color: #333;
         }
-        .student-list {
-            margin-top: 20px;
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        .student-list select {
-            width: 200px;
+        h1, h2 {
+            color: #2c3e50;
+            text-align: center;
         }
-        .student-info, .update-form {
-            margin-top: 20px;
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        select, input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        label {
+            font-weight: bold;
+            color: #34495e;
         }
         .student-info div, .update-form div {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
-        .student-info label, .update-form label {
-            font-weight: bold;
+        .student-info span {
+            font-weight: normal;
+            color: #7f8c8d;
         }
+        .card.student-info {
+            display: none;
+        }
+
     </style>
 </head>
 <body>
-    <h1>School Administration - Student Data</h1>
-    <button onclick="fetchStudentList()">Fetch Student List</button>
-    <div class="student-list">
-        <label for="students">Select Student:</label>
-        <select id="students" onchange="fetchStudentData(this.value)">
-            <option value="">Select a student</option>
-        </select>
-    </div>
-    <div class="student-info">
-        <div><label>Name:</label> <span id="student-name">-</span></div>
-        <div><label>Age:</label> <span id="student-age">-</span></div>
-        <div><label>Roll Number:</label> <span id="student-roll">-</span></div>
-        <div><label>Class:</label> <span id="student-class">-</span></div>
-        <div><label>Subjects:</label> <span id="student-subjects">-</span></div>
-    </div>
+    <div class="container">
+        <h1>School Administration - Student Data</h1>
+        
+        <div class="card">
+            <button class="btn" onclick="fetchStudentList()">Fetch Student List</button>
+            <div class="student-list">
+                <label for="students">Select Student:</label>
+                <select id="students" onchange="this.value ? fetchStudentData(this.value) : clearStudentInfo()">
+                    <option value="">Select a student</option>
+                </select>
+            </div>            
+        </div>
 
-    <h2>Update Student Data</h2>
-    <div class="update-form">
-        <div>
-            <label for="update-name">Name:</label>
-            <input type="text" id="update-name">
+        <div class="card student-info">
+            <h2>Student Information</h2>
+            <div><label>Name:</label> <span id="student-name">-</span></div>
+            <div><label>Age:</label> <span id="student-age">-</span></div>
+            <div><label>Roll Number:</label> <span id="student-roll">-</span></div>
+            <div><label>Class:</label> <span id="student-class">-</span></div>
+            <div><label>Subjects:</label> <span id="student-subjects">-</span></div>
+            <div><label>Gender:</label> <span id="student-gender">-</span></div>
+            <div><label>Address:</label> <span id="student-address">-</span></div>
+            <div><label>Parent/Guardian:</label> <span id="student-parent">-</span></div>
+            <div><label>Contact Number:</label> <span id="student-contact">-</span></div>
+            <div><label>Email:</label> <span id="student-email">-</span></div>
+        </div>        
+
+        <div class="card update-form">
+            <h2>Update Student Data</h2>
+            <div>
+                <label for="update-name">Name:</label>
+                <input type="text" id="update-name">
+            </div>
+            <div>
+                <label for="update-age">Age:</label>
+                <input type="number" id="update-age">
+            </div>
+            <div>
+                <label for="update-roll">Roll Number:</label>
+                <input type="text" id="update-roll">
+            </div>
+            <div>
+                <label for="update-class">Class:</label>
+                <input type="text" id="update-class">
+            </div>
+            <div>
+                <label for="update-subjects">Subjects (comma separated):</label>
+                <input type="text" id="update-subjects">
+            </div>
+            <div>
+                <label for="update-gender">Gender:</label>
+                <select id="update-gender">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div>
+                <label for="update-address">Address:</label>
+                <input type="text" id="update-address">
+            </div>
+            <div>
+                <label for="update-parent">Parent/Guardian:</label>
+                <input type="text" id="update-parent">
+            </div>
+            <div>
+                <label for="update-contact">Contact Number:</label>
+                <input type="tel" id="update-contact">
+            </div>
+            <div>
+                <label for="update-email">Email:</label>
+                <input type="email" id="update-email">
+            </div>
+            <button class="btn" onclick="updateStudentData()">Update Student Data</button>
         </div>
-        <div>
-            <label for="update-age">Age:</label>
-            <input type="number" id="update-age">
-        </div>
-        <div>
-            <label for="update-roll">Roll Number:</label>
-            <input type="text" id="update-roll">
-        </div>
-        <div>
-            <label for="update-class">Class:</label>
-            <input type="text" id="update-class">
-        </div>
-        <div>
-            <label for="update-subjects">Subjects (comma separated):</label>
-            <input type="text" id="update-subjects">
-        </div>
-        <button onclick="updateStudentData()">Update Student Data</button>
     </div>
 
     <script>
-        async function fetchStudentList() {
-            try {
-                const apiUrl = 'https://bvb2u3v6m5.execute-api.us-east-1.amazonaws.com/prod/'; // Replace with your actual API URL
-                const response = await fetch(apiUrl);
-                
-                if (response.ok) {
-                    const jsonResponse = await response.json(); // This gives you the whole response object
-                    
-                    // Check the structure of the response
-                    console.log(jsonResponse);
-                    
-                    // Access the 'body' field and parse it as JSON
-                    const students = JSON.parse(jsonResponse.body); // Parse the stringified JSON array
-
-                    const select = document.getElementById('students');
-                    select.innerHTML = '<option value="">Select a student</option>'; // Reset options
-                    students.forEach(student => {
-                        const option = document.createElement('option');
-                        option.value = student.roll; // Assume roll number is unique
-                        option.textContent = `${student.name} (Roll: ${student.roll})`;
-                        select.appendChild(option);
-                    });
-                } else {
-                    console.error('Error fetching student list:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error fetching student list:', error);
+async function fetchStudentList() {
+    try {
+        const apiUrl = 'https://632lyz50tl.execute-api.eu-central-1.amazonaws.com/Prod/student/';
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'allow'
             }
-        }
+        });
+        
+        if (response.ok) {
+            const responseData = await response.json();
+            console.log('Raw response:', responseData);
 
-
-
-        async function fetchStudentData(rollNumber) {
-            try {
-                const apiUrl = `https://your-api-gateway-url.amazonaws.com/prod/students/${rollNumber}`; // Replace with your API URL
-                const response = await fetch(apiUrl);
-
-                if (response.ok) {
-                    const jsonResponse = await response.json(); // Parse the response to a JavaScript object
-                    
-                    // Check the structure of the response
-                    console.log(jsonResponse);
-
-                    // Assuming jsonResponse is the student object
-                    const student = jsonResponse;
-
-                    // Display or use student data as needed
-                    document.getElementById('student-name').textContent = student.name;
-                    document.getElementById('student-age').textContent = student.age;
-                    document.getElementById('student-class').textContent = student.class;
-                    document.getElementById('student-subject').textContent = student.subject;
-                } else {
-                    console.error('Error fetching student data:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error fetching student data:', error);
+            let students;
+            if (responseData.statusCode === 200 && responseData.body) {
+                students = JSON.parse(responseData.body);
+            } else {
+                throw new Error('Unexpected response format');
             }
-        }
 
+            console.log('Processed students:', students);
 
-        async function updateStudentData(rollNumber, updatedData) {
-            try {
-                const apiUrl = `https://your-api-gateway-url.amazonaws.com/prod/students/${rollNumber}`; // Replace with your API URL
-                
-                const response = await fetch(apiUrl, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(updatedData) // Convert updatedData to JSON string
+            if (Array.isArray(students) && students.length > 0) {
+                const select = document.getElementById('students');
+                select.innerHTML = '<option value="">Select a student</option>';
+                students.forEach(student => {
+                    const option = document.createElement('option');
+                    option.value = student.roll;
+                    option.textContent = `${student.name || 'Unknown'} (Roll: ${student.roll})`;
+                    select.appendChild(option);
                 });
-
-                if (response.ok) {
-                    const jsonResponse = await response.json(); // Parse the response to a JavaScript object
-                    
-                    // Check the structure of the response
-                    console.log('Update successful:', jsonResponse);
-                    
-                    // Handle successful update (e.g., show a success message)
-                    alert('Student data updated successfully!');
-                } else {
-                    console.error('Error updating student data:', response.statusText);
-                    alert('Failed to update student data.');
-                }
-            } catch (error) {
-                console.error('Error updating student data:', error);
-                alert('Error occurred while updating student data.');
+                alert('student data fetched')
+            } else {
+                // No data exists or empty array
+                alert('No student data exists.');
+                console.log('No student data found');
             }
+        } else {
+            console.error('Error fetching student list:', response.statusText);
         }
+    } catch (error) {
+        console.error('Error fetching student list:', error);
+    }
+}
+
+
+async function fetchStudentData(rollNumber) {
+    try {
+        console.log('Fetching data for roll number:', rollNumber);
+        const apiUrl = `https://632lyz50tl.execute-api.eu-central-1.amazonaws.com/Prod/student/${rollNumber}`;
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log('Response status:', response.status);
+        const responseData = await response.json();
+        console.log('Response data:', responseData);
+
+        if (response.ok && responseData.statusCode === 200) {
+            let students;
+            try {
+                students = JSON.parse(responseData.body);
+            } catch (e) {
+                console.error('Error parsing JSON:', e);
+                alert('Error parsing student data. Please try again.');
+                return;
+            }
+
+            console.log('Parsed students data:', students);
+
+            // Find the student with the matching roll number
+            const student = students.find(s => s.roll === rollNumber);
+
+            if (!student) {
+                console.error('Student not found for roll number:', rollNumber);
+                alert('Student not found. Please try again.');
+                return;
+            }
+
+            console.log('Selected student data:', student);
+
+            // Populate the Student Information section
+            const fields = ['name', 'age', 'roll', 'class', 'subjects', 'gender', 'address', 'parent', 'contact', 'email'];
+            fields.forEach(field => {
+                const element = document.getElementById(`student-${field}`);
+                if (element) {
+                    element.textContent = student[field] || '-';
+                } else {
+                    console.warn(`Element not found for field: ${field}`);
+                }
+            });
+
+            // Make the Student Information section visible
+            const infoSection = document.querySelector('.card.student-info');
+            if (infoSection) {
+                infoSection.style.display = 'block';
+            } else {
+                console.error('Student info section not found');
+            }
+        } else {
+            console.error('Error fetching student data:', responseData.statusCode, responseData.body);
+            alert(`Failed to fetch student data. Status: ${responseData.statusCode}`);
+        }
+    } catch (error) {
+        console.error('Error in fetchStudentData:', error);
+        alert('An error occurred while fetching student data. Please check the console and try again.');
+    }
+}
+
+
+
+async function updateStudentData() {
+    const rollNumber = document.getElementById('update-roll').value;
+    const updatedData = {
+        roll: rollNumber,  // Include the roll number in the data
+        name: document.getElementById('update-name').value,
+        age: document.getElementById('update-age').value,
+        class: document.getElementById('update-class').value,
+        subjects: document.getElementById('update-subjects').value,
+        gender: document.getElementById('update-gender').value,
+        address: document.getElementById('update-address').value,
+        parent: document.getElementById('update-parent').value,
+        contact: document.getElementById('update-contact').value,
+        email: document.getElementById('update-email').value
+    };
+
+    try {
+        const apiUrl = `https://632lyz50tl.execute-api.eu-central-1.amazonaws.com/Prod/student/${rollNumber}`;
+        
+        const response = await fetch(apiUrl, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'allow'
+            },
+            body: JSON.stringify(updatedData)
+        });
+
+        const jsonResponse = await response.json();
+
+        if (response.ok) {
+            console.log('Operation successful:', jsonResponse);
+            alert(`Student data updated successfully for Roll Number: ${rollNumber}`);
+        } else {
+            console.error('Error processing student data:', jsonResponse);
+            alert(`Failed to process student data: ${jsonResponse.error || 'Unknown error'}`);
+        }
+    } catch (error) {
+        console.error('Error processing student data:', error);
+        alert('Error occurred while processing student data.');
+    }
+}
+
 
     </script>
 </body>
