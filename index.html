@@ -146,12 +146,11 @@
     <script>
 async function fetchStudentList() {
     try {
-        const apiUrl = 'https://632lyz50tl.execute-api.eu-central-1.amazonaws.com/Prod/student/';
+        const apiUrl = 'https://jxa7c1pqtd.execute-api.eu-central-1.amazonaws.com/prod/student/';
         const response = await fetch(apiUrl, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'allow'
+                'Content-Type': 'application/json'
             }
         });
         
@@ -159,16 +158,11 @@ async function fetchStudentList() {
             const responseData = await response.json();
             console.log('Raw response:', responseData);
 
-            let students;
-            if (responseData.statusCode === 200 && responseData.body) {
-                students = JSON.parse(responseData.body);
-            } else {
-                throw new Error('Unexpected response format');
-            }
+            // Directly use the response if it's an array, otherwise try to parse body
+            let students = Array.isArray(responseData) ? responseData : 
+                          (responseData.body ? JSON.parse(responseData.body) : null);
 
-            console.log('Processed students:', students);
-
-            if (Array.isArray(students) && students.length > 0) {
+            if (students && Array.isArray(students) && students.length > 0) {
                 const select = document.getElementById('students');
                 select.innerHTML = '<option value="">Select a student</option>';
                 students.forEach(student => {
@@ -177,25 +171,27 @@ async function fetchStudentList() {
                     option.textContent = `${student.name || 'Unknown'} (Roll: ${student.roll})`;
                     select.appendChild(option);
                 });
-                alert('student data fetched')
+                alert('Student data fetched successfully');
             } else {
-                // No data exists or empty array
                 alert('No student data exists.');
                 console.log('No student data found');
             }
         } else {
             console.error('Error fetching student list:', response.statusText);
+            alert('Error fetching student list: ' + response.statusText);
         }
     } catch (error) {
         console.error('Error fetching student list:', error);
+        alert('Error fetching student list: ' + error.message);
     }
 }
+
 
 
 async function fetchStudentData(rollNumber) {
     try {
         console.log('Fetching data for roll number:', rollNumber);
-        const apiUrl = `https://632lyz50tl.execute-api.eu-central-1.amazonaws.com/Prod/student/${rollNumber}`;
+        const apiUrl = `https://jxa7c1pqtd.execute-api.eu-central-1.amazonaws.com/prod/student/${rollNumber}`;
         const response = await fetch(apiUrl, {
             method: 'GET',
             headers: {
@@ -203,41 +199,23 @@ async function fetchStudentData(rollNumber) {
             }
         });
 
-        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const responseData = await response.json();
         console.log('Response data:', responseData);
 
-        if (response.ok && responseData.statusCode === 200) {
-            let students;
-            try {
-                students = JSON.parse(responseData.body);
-            } catch (e) {
-                console.error('Error parsing JSON:', e);
-                alert('Error parsing student data. Please try again.');
-                return;
-            }
+        // Handle the response data directly
+        const student = responseData.Item || responseData;
 
-            console.log('Parsed students data:', students);
-
-            // Find the student with the matching roll number
-            const student = students.find(s => s.roll === rollNumber);
-
-            if (!student) {
-                console.error('Student not found for roll number:', rollNumber);
-                alert('Student not found. Please try again.');
-                return;
-            }
-
-            console.log('Selected student data:', student);
-
+        if (student) {
             // Populate the Student Information section
             const fields = ['name', 'age', 'roll', 'class', 'subjects', 'gender', 'address', 'parent', 'contact', 'email'];
             fields.forEach(field => {
                 const element = document.getElementById(`student-${field}`);
                 if (element) {
                     element.textContent = student[field] || '-';
-                } else {
-                    console.warn(`Element not found for field: ${field}`);
                 }
             });
 
@@ -245,19 +223,15 @@ async function fetchStudentData(rollNumber) {
             const infoSection = document.querySelector('.card.student-info');
             if (infoSection) {
                 infoSection.style.display = 'block';
-            } else {
-                console.error('Student info section not found');
             }
         } else {
-            console.error('Error fetching student data:', responseData.statusCode, responseData.body);
-            alert(`Failed to fetch student data. Status: ${responseData.statusCode}`);
+            alert('Student not found');
         }
     } catch (error) {
         console.error('Error in fetchStudentData:', error);
-        alert('An error occurred while fetching student data. Please check the console and try again.');
+        alert('Error fetching student data: ' + error.message);
     }
 }
-
 
 
 async function updateStudentData() {
@@ -276,13 +250,13 @@ async function updateStudentData() {
     };
 
     try {
-        const apiUrl = `https://632lyz50tl.execute-api.eu-central-1.amazonaws.com/Prod/student/${rollNumber}`;
+        const apiUrl = `https://jxa7c1pqtd.execute-api.eu-central-1.amazonaws.com/prod/student/${rollNumber}`;
         
         const response = await fetch(apiUrl, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'allow'
+                'Content-Type': 'application/json'
+                //'Authorization': 'allow'
             },
             body: JSON.stringify(updatedData)
         });
